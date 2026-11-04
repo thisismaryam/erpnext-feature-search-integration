@@ -40,6 +40,12 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 		).appendTo(this.$container);
 		this.$input = this.$form.find("textarea");
 		this.$form.on("submit", (event) => this.submit(event));
+		this.$input.on("keydown", (event) => {
+			if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+				event.preventDefault();
+				this.$form.trigger("submit");
+			}
+		});
 		this.add_message(
 			"assistant",
 			__("Ask me about ERPNext DocTypes, reports, modules, and their fields.")
