@@ -59,11 +59,25 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 
 		const $sources = $("<ul>").addClass("erpnext-assistant-sources");
 		sources.forEach((source) => {
-			$("<li>")
+			const $link = $("<a>")
+				.attr("href", "#")
 				.text(`${source.name}${source.module ? ` (${source.module})` : ""}`)
-				.appendTo($sources);
+				.on("click", (event) => {
+					event.preventDefault();
+					this.open_source(source);
+				});
+			$("<li>").append($link).appendTo($sources);
 		});
 		this.$messages.append($sources);
+	}
+
+	open_source(source) {
+		if (source.feature_type === "Report") {
+			frappe.set_route("query-report", source.name);
+			return;
+		}
+
+		frappe.set_route("List", source.name);
 	}
 
 	async submit(event) {
@@ -80,8 +94,17 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 				method: "erpnext.utilities.page.erpnext_assistant.erpnext_assistant.ask_erpnext",
 				args: { question },
 			});
-			this.add_message("assistant", response.message.answer);
-			this.add_sources(response.message.sources);
+			const result = response.message;
+			const exactMatch = result.sources?.find(
+				(source) => source.similarity_score === 100.0
+			);
+			if (exactMatch) {
+				this.open_source(exactMatch);
+				return;
+			}
+
+			this.add_message("assistant", result.answer);
+			this.add_sources(result.sources);
 		} catch (error) {
 			this.add_message(
 				"assistant",

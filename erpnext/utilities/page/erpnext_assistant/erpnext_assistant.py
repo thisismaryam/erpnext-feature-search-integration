@@ -96,11 +96,12 @@ def _search(query, top_k=3):
 			continue
 
 		feature = features[feature_index]
-		score = max(0.0, (1.0 - float(distance) / 2.0) * 100)
+		similarity_score = max(0.0, (1.0 - float(distance) / 2.0) * 100)
+		score = similarity_score
 		if feature["name"].casefold() == query.casefold():
 			score += 100
 		if score >= MINIMUM_SCORE:
-			results.append((score, feature))
+			results.append((score, {**feature, "similarity_score": similarity_score}))
 
 	results.sort(key=lambda result: result[0], reverse=True)
 	return results[:top_k]
@@ -276,6 +277,8 @@ def ask_erpnext(question):
 				"name": feature["name"],
 				"module": feature.get("module", ""),
 				"source": feature.get("source", ""),
+				"feature_type": feature.get("feature_type", ""),
+				"similarity_score": feature["similarity_score"],
 			}
 			for _, feature in results
 		],
