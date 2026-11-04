@@ -1,0 +1,55 @@
+.erpnext-assistant {
+	display: flex;
+	flex-direction: column;
+	gap: var(--margin-md);
+	margin: 0 auto;
+	max-width: 760px;
+	min-height: 60vh;
+}
+
+.erpnext-assistant-messages {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: var(--margin-sm);
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: var(--padding-md);
+}
+
+.erpnext-assistant-message {
+	border-radius: var(--border-radius-md);
+	max-width: 85%;
+	padding: var(--padding-sm) var(--padding-md);
+	white-space: pre-wrap;
+}
+
+.erpnext-assistant-assistant {
+	align-self: flex-start;
+	background: var(--subtle-fg);
+}
+
+.erpnext-assistant-user {
+	align-self: flex-end;
+	background: var(--control-bg);
+}
+
+.erpnext-assistant-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--margin-sm);
+}
+
+.erpnext-assistant-form textarea {
+	resize: vertical;
+}
+
+.erpnext-assistant-form button {
+	align-self: flex-end;
+}
+
+.erpnext-assistant-sources {
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	margin: 0;
+}

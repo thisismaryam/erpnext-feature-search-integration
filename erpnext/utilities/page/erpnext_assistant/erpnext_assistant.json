@@ -1,0 +1,10 @@
+{
+ "doctype": "Page",
+ "module": "Utilities",
+ "name": "erpnext-assistant",
+ "page_name": "erpnext-assistant",
+ "standard": "Yes",
+ "title": "ERPNext Assistant",
+ "icon": "chat",
+ "roles": []
+}

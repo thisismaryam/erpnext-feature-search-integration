@@ -175,3 +175,20 @@ Please read our [Logo and Trademark Policy](TRADEMARK_POLICY.md).
 		</picture>
 	</a>
 </div>
+
+## ERPNext Assistant Integration
+
+This fork adds a chat-style assistant that answers questions using ERPNext DocType and report metadata.
+
+### Install in a Bench
+
+From your Bench directory, run:
+
+```sh
+bench get-app --branch feature/erpnext-assistant https://github.com/thisismaryam/erpnext-feature-search-integration
+bench pip install -e "apps/erpnext[rag]"
+bench set-config groq_api_key "YOUR_GROQ_API_KEY"
+bench restart
+```
+
+Open `/app/erpnext-assistant` in ERPNext Desk. The pre-built feature index is included and committed at `erpnext/utilities/page/erpnext_assistant/data/vector.index` (relative to this repository); rebuilding it is not required for setup.
