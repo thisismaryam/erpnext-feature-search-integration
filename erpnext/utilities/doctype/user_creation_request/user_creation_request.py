@@ -25,6 +25,7 @@ class UserCreationRequest(Document):
 		mobile_no: DF.Data | None
 		phone: DF.Data | None
 		requested_by: DF.Link
+		role_to_assign: DF.Link
 		status: DF.Literal["Pending Approval", "Approved"]
 		time_zone: DF.Data | None
 	# end: auto-generated types
@@ -72,8 +73,14 @@ def approve_user_creation_request(name):
 	request = frappe.get_doc("User Creation Request", name)
 	if request.status != "Pending Approval":
 		frappe.throw(_("This User creation request has already been processed."))
+	if not request.role_to_assign:
+		frappe.throw(_("Select a desk-access role before approving this request."))
 	if frappe.db.exists("User", request.email):
 		frappe.throw(_("A User with this email address already exists."))
+
+	role = frappe.get_doc("Role", request.role_to_assign)
+	if not role.desk_access:
+		frappe.throw(_("The selected role does not grant Desk access."))
 
 	name_parts = request.full_name.split()
 	user_values = {
@@ -82,9 +89,10 @@ def approve_user_creation_request(name):
 		"first_name": name_parts[0],
 		"middle_name": " ".join(name_parts[1:-1]),
 		"last_name": name_parts[-1] if len(name_parts) > 1 else "",
-		"user_type": "Website User",
-		"enabled": 0,
+		"user_type": "System User",
+		"enabled": 1,
 		"send_welcome_email": 0,
+		"roles": [{"role": role.name}],
 	}
 	for fieldname in ("mobile_no", "phone", "gender", "birth_date", "language", "time_zone"):
 		if request.get(fieldname):

@@ -13,6 +13,7 @@
   "birth_date",
   "language",
   "time_zone",
+  "role_to_assign",
   "requested_by",
   "status",
   "created_user"
@@ -69,6 +70,14 @@
    "fieldtype": "Data",
    "label": "Time Zone",
    "read_only": 1
+  },
+  {
+   "fieldname": "role_to_assign",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Role to Assign",
+   "link_filters": "[[\"Role\",\"desk_access\",\"=\",1]]",
+   "options": "Role"
   },
   {
    "fieldname": "requested_by",

@@ -7,7 +7,13 @@ frappe.ui.form.on("User Creation Request", {
 			return;
 		}
 
-		frm.add_custom_button(__("Approve and Create User"), async () => {
+		frm.add_custom_button(__("Approve and Create Active User"), async () => {
+			if (!frm.doc.role_to_assign) {
+				frappe.msgprint(__("Select a desk-access role before approving this request."));
+				frm.scroll_to_field("role_to_assign");
+				return;
+			}
+
 			const response = await frappe.call({
 				method: "erpnext.utilities.doctype.user_creation_request.user_creation_request.approve_user_creation_request",
 				args: { name: frm.doc.name },
