@@ -1,6 +1,10 @@
 # ERPNext Assistant
 
-This Desk page answers questions using ERPNext DocType and report metadata from the checked-out ERPNext app. It does not read customer, employee, or other live site records. Questions are sent to Groq for keyword extraction and answer generation.
+This Desk page answers questions using ERPNext DocType and report metadata from the checked-out ERPNext app. It does not read customer, employee, or other live site records. Questions are sent to Groq for intent detection, keyword extraction, and answer generation.
+
+The assistant can also prepare a **User Creation Request** when asked to create a user. It extracts the name and email, plus any explicitly provided mobile number, phone, gender, birth date, language, or time zone. The request is linked in the chat and visible to its requester and System Managers. A System Manager with User create permission can review and approve it. Approval creates a disabled Website User with no roles and does not send a welcome email; the reviewer can configure and enable the User separately. The assistant never creates or activates a User directly.
+
+The ERPNext repository does not include Frappe's core `User` DocType definition. These request fields are limited to identity and profile/contact fields referenced in ERPNext's User-related flows; access-critical fields such as roles, role profile, and User Type are not AI-assigned.
 
 ## Setup
 
@@ -16,7 +20,7 @@ Set `groq_api_key` in the site configuration (or provide `GROQ_API_KEY` in the B
 bench --site <site-name> set-config groq_api_key "<your-groq-api-key>"
 ```
 
-The page is available at `/app/erpnext-assistant`.
+After `bench migrate` and `bench restart`, the page is available at `/app/erpnext-assistant`. Rebuild the feature index after the new request DocType is installed if the catalog should include it.
 
 The optional `groq_model` site setting selects the Groq model; by default the assistant uses `openai/gpt-oss-120b`.
 

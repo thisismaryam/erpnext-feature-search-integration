@@ -28,12 +28,14 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 		$("<p>")
 			.addClass("text-muted")
 			.text(
-				__("Answers use ERPNext DocType and report metadata only. Each question is answered independently.")
+				__(
+					"Ask about ERPNext features or request a new User. User requests are saved for review and do not create an account until an authorized reviewer approves them."
+				)
 			)
 			.appendTo(this.$container);
 		this.$form = $(
 			`<form class="erpnext-assistant-form">
-				<label for="erpnext-assistant-question">${__("Ask about ERPNext features")}</label>
+				<label for="erpnext-assistant-question">${__("Ask about ERPNext or request a User")}</label>
 				<textarea id="erpnext-assistant-question" maxlength="2000" rows="3" required></textarea>
 				<button class="btn btn-primary" type="submit">${__("Ask")}</button>
 			</form>`
@@ -77,6 +79,17 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 		this.$messages.append($sources);
 	}
 
+	add_user_creation_request_link(name) {
+		const $link = $("<a>")
+			.attr("href", "#")
+			.text(__("Review User creation request"))
+			.on("click", (event) => {
+				event.preventDefault();
+				frappe.set_route("Form", "User Creation Request", name);
+			});
+		$("<p>").addClass("erpnext-assistant-request-link").append($link).appendTo(this.$messages);
+	}
+
 	open_source(source) {
 		if (source.feature_type === "Report") {
 			frappe.set_route("query-report", source.name);
@@ -97,10 +110,16 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 
 		try {
 			const response = await frappe.call({
-				method: "erpnext.utilities.page.erpnext_assistant.erpnext_assistant.ask_erpnext",
+				method: "erpnext.utilities.page.erpnext_assistant.erpnext_assistant.handle_assistant_question",
 				args: { question },
 			});
 			const result = response.message;
+			if (result.action === "user_creation_request") {
+				this.add_message("assistant", result.answer);
+				this.add_user_creation_request_link(result.request_name);
+				return;
+			}
+
 			const exactMatch = result.sources?.find(
 				(source) => source.similarity_score === 100.0
 			);
