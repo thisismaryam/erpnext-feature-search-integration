@@ -86,6 +86,11 @@ def _embed_texts(texts):
 
 
 def _search(query, top_k=3):
+	"""Search by cosine similarity, scaled to 0-100; MINIMUM_SCORE is the cutoff.
+
+	For normalized embeddings, the L2 distance converts to cosine similarity as
+	1 - distance / 2, so a score of 40 corresponds to cosine similarity 0.4.
+	"""
 	index, features = _load_index()
 	query_vector = _embed_texts([query])
 	distances, indices = index.search(query_vector, top_k * 2)
@@ -99,7 +104,7 @@ def _search(query, top_k=3):
 		similarity_score = max(0.0, (1.0 - float(distance) / 2.0) * 100)
 		score = similarity_score
 		if feature["name"].casefold() == query.casefold():
-			score += 100
+			score = min(100.0, score + 100)
 		if score >= MINIMUM_SCORE:
 			results.append((score, {**feature, "similarity_score": similarity_score}))
 
