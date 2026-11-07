@@ -120,14 +120,6 @@ erpnext.ERPNextAssistant = class ERPNextAssistant {
 				return;
 			}
 
-			const exactMatch = result.sources?.find(
-				(source) => source.similarity_score === 100.0
-			);
-			if (exactMatch) {
-				this.open_source(exactMatch);
-				return;
-			}
-
 			this.add_message("assistant", result.answer);
 			this.add_sources(result.sources);
 		} catch (error) {
